@@ -56,7 +56,7 @@
   
   #'  Covariate values for each pixel in study area for predicting across study area
   #'  Using 1km grid cells for ease of computation but values for 30m grid cells
-  #'  used in full analysis are provided in "Covariate Data" folder as well
+  #'  used in full analysis are provided as well
   NE_covs_1km <- read.csv("./Data/StudyAreaWide_NE_Covariates_1km.csv") %>% 
     #'  Add binary study area indicator for occupancy predictions
     mutate(Area = 0)
@@ -151,35 +151,18 @@
   
   ####  Predict probability of use across study areas  ####
   #'  --------------------------------------------------------------------------
-  #'  Snag the intercept for each species (needed below)
-  occ_int <- occ_out %>%
-    dplyr::select(c(Species, Season, Parameter, Estimate)) %>%
-    mutate(Parameter = ifelse(Parameter == "(Intercept)", "Intercept", Parameter)) %>%
-    #'  Spread data so each row represents model coefficients for a single season, single species model
-    pivot_wider(names_from = Parameter, values_from = Estimate) %>%
-    #'  Rename intercept
-    transmute(
-      Species = Species,
-      Season = Season,
-      alpha = Intercept)
-  
   #'  Manipulate occupancy result table
-  #'  Exclude all non-significant coefficients by forcing to 0
   occ_coefs_signif <- occ_out %>%
     dplyr::select(c(Species, Season, Parameter, Estimate, Pval)) %>%
     mutate(Parameter = ifelse(Parameter == "(Intercept)", "Intercept", Parameter)) %>%
-    #'  Use p-values to change non-significant coefficients (alpha-level = 0.1) to 0 so there is no effect
-    mutate(Estimate = ifelse(Pval > 0.1, Estimate == 0, Estimate)) %>%
     dplyr::select(-Pval) %>%
     #'  Spread data so each row represents model coefficients for a single season, single species model
     pivot_wider(names_from = Parameter, values_from = Estimate) %>%
-    #'  Many intercepts were reduced to 0 so we need to swap this intercept column 
-    #'  with the original intercepts using the occ_int data frame above
     #'  Rename coefficients so they're different than covariate names
     transmute(
       Species = Species,
       Season = Season,
-      alpha = occ_int$alpha,
+      alpha = Intercept,
       B.elev = Elev,
       B.slope = Slope,
       B.for = PercForMix,
@@ -284,35 +267,18 @@
   
   ####  Predict relative probability of selection across study areas  ####
   #'  --------------------------------------------------------------------------
-  #'  Snag the intercept for each species (needed below)
-  rsf_int <- rsf_out %>%
-    dplyr::select(c(Species, Season, Parameter, Estimate)) %>%
-    mutate(Parameter = ifelse(Parameter == "(Intercept)", "Intercept", Parameter)) %>%
-    #'  Spread data so each row represents model coefficients for a single season, single species model
-    pivot_wider(names_from = Parameter, values_from = Estimate) %>%
-    #'  Rename coefficients so they're different than covariate names
-    transmute(
-      Species = Species,
-      Season = Season,
-      alpha = Intercept)
-  
   #'  Manipulate RSF result tables
-  #'  Exclude all non-significant coefficients by forcing to 0
   rsf_coefs_signif <- rsf_out %>%
     dplyr::select(c(Species, Season, Parameter, Estimate, Pval)) %>%
     mutate(Parameter = ifelse(Parameter == "(Intercept)", "Intercept", Parameter)) %>%
-    #'  Use p-values to change non-significant coefficients (alpha-level = 0.05) to 0 so there is no effect
-    mutate(Estimate = ifelse(Pval > 0.05, Estimate == 0, Estimate)) %>%
     dplyr::select(-Pval) %>%
     #'  Spread data so each row represents model coefficients for a single season, single species model
     pivot_wider(names_from = Parameter, values_from = Estimate) %>%
-    #'  No intercepts should have been changed here but just in case- swap current
-    #'  intercept column with the intercept from above
     #'  Rename coefficients so they're different than covariate names
     transmute(
       Species = Species,
       Season = Season,
-      alpha = rsf_int$alpha,
+      alpha = Intercept, 
       B.elev = Elev,
       B.slope = Slope,
       B.for = PercForMix,
@@ -474,8 +440,6 @@
     return(pred_corr)
   }
   #'  Run each set of occupancy and RSF predictions through function
-  #'  Note: warning messages appear for bobcat, elk, and wolf correlations when 
-  #'  all occupancy coefficients are non-significant- correlation analysis is meaningless
   bob_smr_corr <- predict_corr(Predicted_occ$BOB_smr_occ, Predicted_rsf$BOB_smr_rsf2)  
   bob_wtr_corr <- predict_corr(Predicted_occ$BOB_wtr_occ, Predicted_rsf$BOB_wtr_rsf2)  
   coug_smr_corr <- predict_corr(Predicted_occ$COUG_smr_occ, Predicted_rsf$COUG_smr_rsf2)
@@ -505,6 +469,10 @@
       Correlation = round(corr, digits = 2)
     ) %>%
     arrange(Species)
+  
+  ####  NOTE: These correlation coefficients differ from published values due to 
+  ####  larger pixels used here (1km^2 pixels). Switch to 30m^2 pixels to reproduce
+  ####  exact published results (requires massive computation time and power).
   
   #'  End!
   
