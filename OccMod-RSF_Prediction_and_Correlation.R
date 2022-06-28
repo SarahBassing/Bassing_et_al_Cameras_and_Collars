@@ -21,25 +21,23 @@
   
   ####  Read in data  ####
   #'  Occupancy model output
-  occ_out <- read.csv("./Data/Results tables/OccMod_OccProb_Results.csv") %>%
+  occ_out <- read.csv("./Data/OccMod_OccProb_Results.csv") %>%
     #'  Calculate 90% confidence intervals
     mutate(
       l90 = (Estimate - (1.64 * SE)),  
       u90 = (Estimate + (1.64 * SE))   
-    ) %>%
-    dplyr::select(-c(X)) 
+    ) 
   
   #'  RSF results output
-  rsf_out <- read.csv("./Data/Results tables/RSF_Results.csv") %>% 
+  rsf_out <- read.csv("./Data/RSF_Results.csv") %>% 
     #'  Calculate 95% confidence intervals
     mutate(
       l95 = (Estimate - (1.96 * SE)),  
       u95 = (Estimate + (1.96 * SE))
-    ) %>%
-    dplyr::select(-X)
+    ) 
   
   #'  Original covariate data from occupancy models
-  stations <- read.csv("./Data/Covariate Data/Camera_Station_Covariates.csv") %>%
+  stations <- read.csv("./Data/Camera_Station_Covariates.csv") %>%
     transmute(
       Year = as.factor(Year),
       Study_Area = as.factor(Study_Area),
@@ -54,15 +52,15 @@
     arrange(Year)
   
   #'  Original covariate data from RSFs
-  load("./Data/Use-Available Data/RSF_used_avail_pts_noXY.RData")
+  load("./Data/RSF_used_avail_pts_noXY.RData")
   
   #'  Covariate values for each pixel in study area for predicting across study area
   #'  Using 1km grid cells for ease of computation but values for 30m grid cells
   #'  used in full analysis are provided in "Covariate Data" folder as well
-  NE_covs_1km <- read.csv("./Data/Covariate Data/StudyAreaWide_NE_Covariates_1km.csv") %>% 
+  NE_covs_1km <- read.csv("./Data/StudyAreaWide_NE_Covariates_1km.csv") %>% 
     #'  Add binary study area indicator for occupancy predictions
     mutate(Area = 0)
-  OK_covs_1km <- read.csv("./Data/Covariate Data/StudyAreaWide_OK_Covariates_1km.csv") %>%
+  OK_covs_1km <- read.csv("./Data/StudyAreaWide_OK_Covariates_1km.csv") %>%
     #'  Add binary study area indicator for occupancy predictions
     mutate(Area = 1)
   all_covs_1km <- as.data.frame(rbind(NE_covs_1km, OK_covs_1km))
