@@ -12,7 +12,7 @@
   #'  Specific date periods mirror 13-week sampling window used in corresponding
   #'  occupancy models. Result tables created at end of script.
   #'  
-  #'  MUST download Data folder from Dryad repository for script to work.
+  #'  MUST download data from Dryad repository and create "Data" folder for script to work.
   #'  
   #'  GPS collar data collected as part of the Washington Predator-Prey Project:
   #'  https://predatorpreyproject.weebly.com/
@@ -26,7 +26,7 @@
   
   #'  Load 1:20 ratio of used and available points for all species
   #'  Available points drawn for 2nd order resource selection
-  load("./Data/Use-Available Data/RSF_used_avail_pts_noXY.RData")
+  load("./Data/RSF_used_avail_pts_noXY.RData")
   
   #'  Center & scale covariates 
   #'  Note: standardizing across all IDs & years, but separately by season & species
@@ -205,14 +205,14 @@
                       md_s1819_rsf, md_w1820_rsf, wtd_s1819_rsf, wtd_w1820_rsf, 
                       wolf_s1819_rsf, wolf_w1820_rsf)
   
-  #'  Save RSF outputs because they take forever to run!
-  save(rsf_outputs, "./Data/Use-Available Data/RSF_outputs.RData")
+  #' #'  Save RSF outputs because they take forever to run!
+  #' save(rsf_outputs, "./Data/RSF_outputs.RData")
 
   
   ####  Summary tables  ####
   #'  --------------------------------------------------------------------------
   #'  Load RSF outputs data if needed
-  load("./Data/Use-Available Data/RSF_outputs.RData")
+  load("./Data/RSF_outputs.RData")
   
   #'  Function to extract parameter estimates & p-values from rsf outputs
   rounddig <- 2
@@ -261,8 +261,8 @@
     arrange(Species)
   colnames(rsf_results) <- c("Species", "Season", "Parameter", "Estimate", "SE", "z", "Pval")
   
-  #'  Save for predicting relative prob. of resource selection across study area
-  write.csv(rsf_results, "./Data/Results tables/RSF_Results.csv")  
+  #' #'  Save for predicting relative prob. of resource selection across study area
+  #' write.csv(rsf_results, "./Data/RSF_Results.csv")  
   
   #'  End
   
