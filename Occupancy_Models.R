@@ -14,7 +14,7 @@
   #'  coldest months in winter with the most consistent snow. Result tables 
   #'  created at end of script.
   #'  
-  #'  MUST download Data folder from Dryad repository for script to work.
+  #'  MUST download data from Dryad repository and create "Data" folder for script to work.
   #'  
   #'  Camera data collected as part of the Washington Predator-Prey Project:
   #'  https://predatorpreyproject.weebly.com/
@@ -28,14 +28,14 @@
   library(data.table)
 
   #'  Read in detection histories
-  DH_files <- list.files("./Data/Detection Histories/", pattern=".csv", full.names = TRUE)
+  DH_files <- list.files("./Data/", pattern = "_detection_history_7_days_per_occasion.csv", full.names = TRUE)
   DH_files # this will be the order of the DH_list!
   DH_list <- lapply(DH_files, read.csv)
   
   #'  Read in covariate data & scale
   #'  Elevation, Slope, Road Density, % Forest, Grass, Shrub => site-level occupancy covs
   #'  Distance, Height, monitoring => survey/site-level detection covs
-  stations <- read.csv("./Data/Covariate Data/Camera_Station_Covariates.csv") %>% 
+  stations <- read.csv("./Data/Camera_Station_Covariates.csv") %>% 
     mutate(
       CameraLocation = as.factor(CameraLocation),
       Year = as.factor(Year),
@@ -78,12 +78,10 @@
   (cov_matrix_OK <- cor(cov_data_OK, use = "complete.obs")) 
   
   #'  Survey-level mean weekly temperature per camera site
-  temp_smr <- read.csv("./Data/Covariate Data/Sampling_Occasion_Summer_Temperatures.csv") %>%
-    dplyr::select(-X)
+  temp_smr <- read.csv("./Data/Sampling_Occasion_Summer_Temperatures.csv") 
   Temp_smr <- temp_smr %>%
     dplyr::select(-c(CameraLocation, Study_Area)) 
-  temp_wtr <- read.csv("./Data/Covariate Data/Sampling_Occasion_Winter_Temperatures.csv") %>%
-    dplyr::select(-X)
+  temp_wtr <- read.csv("./Data/Sampling_Occasion_Winter_Temperatures.csv") 
   Temp_wtr <- temp_wtr %>%
     dplyr::select(-c(CameraLocation, Study_Area)) 
 
@@ -561,8 +559,8 @@
       Pval = round(Pval, rounddig)
     )
   
-  #'  Save for predicting probability of occupancy across study area
-  write.csv(results_psi, "./Data/Results tables/OccMod_OccProb_Results.csv")  
+  #' #'  Save for predicting probability of occupancy across study area
+  #' write.csv(results_psi, "./Data/OccMod_OccProb_Results.csv")  
   
   
   ####  Covariate effects on detection probability  ####
