@@ -13,7 +13,7 @@
   #'  Script then predicts probability of use and relative selection across
   #'  study areas and calculates pixel by pixel correlation between results. 
   #'  
-  #'  MUST download Data folder from Dryad repository for script to work.
+  #'  MUST download data from Dryad repository and create "Data" folder for script to work.
   #'  --------------------------------------------------------------------------
 
   #'  Load libraries
