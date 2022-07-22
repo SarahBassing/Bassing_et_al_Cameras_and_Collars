@@ -1,7 +1,8 @@
   #'  R code associated with: 
   #'  
   #'  Bassing, S. B., M. Devivo, T. R. Ganz, B. N. Kertson, L. R. Prugh, T. Roussin, 
-  #'  L. Satterfield, R. M. Windell, A. J. Wirsing, & B. Gardner 
+  #'  L. Satterfield, R. M. Windell, A. J. Wirsing, & B. Gardner. 2022. Ecological 
+  #'  Applications. 
   #'  
   #'  Are we telling the same story? Comparing inferences made from camera trap 
   #'  and telemetry data for wildlife monitoring 
